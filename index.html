@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cosmic Synaptic — Live Frontend</title>
+<style>
+:root{
+  --bg:#020204;
+  --panel:#07121a;
+  --neon:#00ff66;
+  --accent:#9b59ff;
+  --danger:#ff3b3b;
+  --muted:#7f8c8d;
+  --glass: rgba(255,255,255,0.03);
+  --mono: 'Courier New', monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% 10%, #00110a 0%, #020204 40%, #03030a 100%);font-family:Inter, system-ui, Arial;color:#dff;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:980px;max-width:98vw;background:linear-gradient(180deg, rgba(6,8,12,0.9), rgba(3,4,7,0.85));border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 60px rgba(0,0,0,0.6), 0 0 40px rgba(0,255,102,0.02);}
+.header{display:flex;gap:12px;align-items:center}
+.logo{width:66px;height:66px;border-radius:10px;background:linear-gradient(135deg,var(--neon),var(--accent));display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:800;color:#002;box-shadow:0 8px 30px rgba(0,255,102,0.06)}
+.title{line-height:1}
+.title h1{margin:0;font-size:20px;color:var(--neon);text-shadow:0 0 8px rgba(0,255,102,0.08);letter-spacing:0.6px}
+.title p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 380px;gap:16px;margin-top:14px}
+.panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+textarea{width:100%;height:84px;background:#001018;color:var(--neon);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);font-family:var(--mono);font-size:14px}
+.controls{display:flex;gap:10px;align-items:center;margin-top:10px}
+button{cursor:pointer;border:0;padding:10px 14px;border-radius:8px;font-weight:700}
+.btn-primary{background:linear-gradient(90deg,var(--neon),#00ffd1);color:#002}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);padding:8px 12px}
+.output{background:#001018;padding:12px;border-radius:10px;color:var(--neon);font-family:var(--mono);height:360px;overflow:auto;white-space:pre-wrap;border:1px solid rgba(255,255,255,0.02)}
+.small{font-size:13px;color:var(--muted)}
+.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.badge{display:inline-block;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.02);font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+/* prediction panel */
+.pred-box{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+.pred-row{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+.pred-number{font-size:36px;font-weight:800;font-family:var(--mono);letter-spacing:2px}
+.pred-extra{display:flex;gap:10px;align-items:center}
+.conf-bar{height:12px;background:rgba(0,0,0,0.3);border-radius:8px;overflow:hidden;width:140px}
+.conf-fill{height:100%;background:linear-gradient(90deg,var(--neon),var(--accent));width:40%}
+.color-dot{width:18px;height:18px;border-radius:50%;display:inline-block;border:2px solid rgba(255,255,255,0.06)}
+
+/* small glitch effect */
+@keyframes glitch {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-1px); }
+  40% { transform: translateX(1px); }
+  60% { transform: translateX(-0.5px); }
+  80% { transform: translateX(0.5px); }
+  100% { transform: translateX(0); }
+}
+.glitch{animation:glitch 1.8s infinite;}
+
+/* responsive */
+@media (max-width:900px){ .grid{grid-template-columns:1fr} .output{height:240px} }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="logo">CS</div>
+    <div class="title">
+      <h1>WHITE HACKER AI v4.2 — Cosmic Synaptic Core</h1>
+      <p class="small">Demo — frontend-only live predictions (educational)</p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="small">پچھلے 10 نتائج یہاں ڈالیں (comma separated):</div>
+      <textarea id="input">3,3,8,2,3,9,0,3,7,5</textarea>
+      <div class="controls">
+        <button id="predict" class="btn-primary">Predict Now</button>
+        <button id="next" class="btn-primary">Next Prediction</button>
+        <button id="reset" class="btn-ghost">Reset</button>
+        <div style="flex:1"></div>
+        <div class="meta">
+          <span class="badge">3X MARTINGALE</span>
+          <span class="badge">Frequency+Recency</span>
+          <span class="badge">Offline</span>
+        </div>
+      </div>
+      <div style="margin-top:12px" class="small">Notes: یہ ایک frontend demo ہے — online deployment کے لیے GitHub Pages استعمال کریں.</div>
+    </div>
+
+    <div class="panel">
+      <div class="pred-box">
+        <div class="pred-row">
+          <div>
+            <div style="font-size:12px;color:var(--muted)">ANALYSIS: COMPLETE</div>
+            <div class="pred-number" id="pred-number">-</div>
+            <div style="color:var(--muted);font-size:12px" id="pred-pid">PID: -</div>
+          </div>
+          <div class="pred-extra">
+            <div id="pred-size" style="text-transform:uppercase;color:var(--neon);font-weight:700">-</div>
+            <div id="pred-color"><span class="color-dot" id="color-dot" style="background:#444"></span></div>
+            <div class="conf-bar" title="Confidence">
+              <div class="conf-fill" id="conf-fill" style="width:40%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pred-row">
+          <div style="font-size:13px;color:var(--muted)">DOMINANT LOGIC</div>
+          <div style="font-weight:700;color:var(--accent)" id="pred-logic">Frequency+Recency</div>
+        </div>
+
+        <div class="pred-row">
+          <div style="font-size:13px;color:var(--muted)">CAPITAL MANAGEMENT</div>
+          <div style="text-align:right;font-family:var(--mono);font-size:13px;color:var(--neon)" id="pred-cap">Level 1 • Next ₹10</div>
+        </div>
+
+        <div class="pred-row" style="flex-direction:column;gap:6px">
+          <div style="font-size:13px;color:var(--muted)">AI_MEMORY_STATE</div>
+          <pre id="ai-memory" style="background:transparent;border:none;color:var(--neon);margin:0;padding:0;font-family:var(--mono);font-size:13px">-</pre>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Frontend-only predictor with simple heuristics and persistent memory (localStorage)
+const COLORS = { red: [0,2,4,6,8], green: [1,3,5,7,9], violet: [0,5] };
+const SIZE = n => n >= 5 ? 'BIG' : 'SMALL';
+
+function parseInput(s){
+  return s.split(',').map(x => parseInt(x)).filter(n => !isNaN(n)).slice(0,10);
+}
+
+function frequencyRecencyPredict(lastResults){
+  const scores = new Array(10).fill(1.0);
+  const freq = {};
+  lastResults.forEach(n => freq[n] = (freq[n]||0)+1);
+  Object.entries(freq).forEach(([n,c]) => scores[parseInt(n)] += c*1.6);
+  for(let i=0;i<lastResults.length;i++){
+    const n = lastResults[lastResults.length-1-i];
+    scores[n] += (i+1)*0.35;
+  }
+  const items = scores.map((s,i)=>({n:i,s})).sort((a,b)=>b.s-a.s);
+  const best = items[0].n;
+  const avg = scores.reduce((a,b)=>a+b,0)/10;
+  const conf = Math.min(98, Math.round(50 + (items[0].s - avg)*9));
+  let color = '🔴';
+  if(COLORS.green.includes(best)) color = '🟢';
+  if(COLORS.violet.includes(best)) color = '🟣';
+  return { number: best, color, size: SIZE(best), confidence: conf };
+}
+
+// Local AI memory stored in localStorage
+const STORAGE_KEY = 'cosmic_ai_memory_v1';
+function loadMemory(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return { current_level:1, total_invested:10, last_10_results:[3,3,8,2,3,9,0,3,7,5], last_top_logic:'Frequency+Recency', last_result:'N/A' };
+  try{ return JSON.parse(raw); }catch(e){ return null; }
+}
+function saveMemory(mem){ localStorage.setItem(STORAGE_KEY, JSON.stringify(mem)); }
+
+let AI_MEMORY = loadMemory();
+renderMemory();
+
+function renderMemory(){
+  document.getElementById('ai-memory').textContent = JSON.stringify(AI_MEMORY, null, 2);
+  document.getElementById('pred-cap').textContent = `Level ${AI_MEMORY.current_level} • Next ₹${10 * (3 ** (AI_MEMORY.current_level-1))}`;
+}
+
+function setPredictionUI(pred, pid){
+  document.getElementById('pred-number').textContent = pred.number;
+  document.getElementById('pred-pid').textContent = `PID: ${pid}`;
+  document.getElementById('pred-size').textContent = pred.size;
+  const dot = document.getElementById('color-dot');
+  if(pred.color === '🔴') dot.style.background = '#ff3b3b';
+  if(pred.color === '🟢') dot.style.background = '#00ff66';
+  if(pred.color === '🟣') dot.style.background = '#9b59ff';
+  document.getElementById('conf-fill').style.width = pred.confidence + '%';
+  document.getElementById('pred-logic').textContent = 'Frequency + Recency Heuristic';
+}
+
+function makePID(){
+  return 'PID-' + Math.floor(Math.random()*900000 + 100000);
+}
+
+function doPredict(useNext=false){
+  const raw = document.getElementById('input').value;
+  let arr = parseInput(raw);
+  if(arr.length === 0){ alert('پہلے نمبرز ڈالیں'); return; }
+  if(useNext && AI_MEMORY.last_generated_number !== undefined){
+    // slide window: drop oldest if <10
+    if(arr.length < 10){
+      arr.push(AI_MEMORY.last_generated_number);
+    } else {
+      arr = arr.slice(1);
+      arr.push(AI_MEMORY.last_generated_number);
+    }
+  }
+  AI_MEMORY.last_10_results = arr.slice(0,10);
+  const pred = frequencyRecencyPredict(AI_MEMORY.last_10_results);
+  AI_MEMORY.last_generated_number = pred.number;
+  // update martingale demo (very simple)
+  if(AI_MEMORY.last_result === 'LOSS'){
+    AI_MEMORY.current_level = Math.min(6, AI_MEMORY.current_level + 1);
+    AI_MEMORY.total_invested = AI_MEMORY.total_invested + (10 * (3 ** (AI_MEMORY.current_level-1)));
+  } else if(AI_MEMORY.last_result === 'WIN'){
+    AI_MEMORY.current_level = 1;
+    AI_MEMORY.total_invested = 10;
+  } else {
+    AI_MEMORY.current_level = AI_MEMORY.current_level || 1;
+    AI_MEMORY.total_invested = AI_MEMORY.total_invested || 10;
+  }
+  AI_MEMORY.last_top_logic = 'Frequency+Recency';
+  AI_MEMORY.last_result = 'N/A';
+  saveMemory(AI_MEMORY);
+  renderMemory();
+  setPredictionUI(pred, makePID());
+}
+
+document.getElementById('predict').addEventListener('click', ()=>{ AI_MEMORY.last_result = 'N/A'; saveMemory(AI_MEMORY); doPredict(false); });
+document.getElementById('next').addEventListener('click', ()=>{ AI_MEMORY.last_result = 'N/A'; saveMemory(AI_MEMORY); doPredict(true); });
+document.getElementById('reset').addEventListener('click', ()=>{ localStorage.removeItem(STORAGE_KEY); AI_MEMORY = loadMemory(); document.getElementById('input').value = AI_MEMORY.last_10_results.join(','); renderMemory(); document.getElementById('pred-number').textContent='-'; document.getElementById('pred-pid').textContent='PID: -'; document.getElementById('conf-fill').style.width='40%'; document.getElementById('color-dot').style.background='#444'; document.getElementById('pred-logic').textContent='-'; document.getElementById('pred-size').textContent='-'; });
+// init
+document.getElementById('input').value = AI_MEMORY.last_10_results.join(',');
+doPredict(false);
+</script>
+</body>
+</html>
