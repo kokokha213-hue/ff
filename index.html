@@ -583,7 +583,7 @@
             <div class="cyber-card">
                 <div class="brand-header">
                     <div class="logo-wrapper">
-                        <img src="https://user25261.cn.imgto.link/public/20260819/1000258345.avif" alt="ANSH MODS Logo" class="logo-img">
+                        <img src="https://user25261.cn.imgto.link/public/20260819/1000258345.avif" alt="BILAL SIR MODS Logo" class="logo-img">
                     </div>
                     <h1 class="brand-title">BILAL SIR MODS</h1>
                     <p class="brand-sub">VIP SIGNAL ENGINE v4.0</p>
@@ -828,10 +828,10 @@
     drawFrequency();
 
     // ===== DEVICE ID =====
-    let hwid = localStorage.getItem('ansh_hwid_v4');
+    let hwid = localStorage.getItem('BILAL SIR_hwid_v4');
     if (!hwid) {
-        hwid = 'ANSH-' + Math.random().toString(36).substr(2, 7).toUpperCase();
-        localStorage.setItem('ansh_hwid_v4', hwid);
+        hwid = 'BILALSIR-' + Math.random().toString(36).substr(2, 7).toUpperCase();
+        localStorage.setItem('BILAL SIR_hwid_v4', hwid);
     }
     document.getElementById('did').innerText = hwid;
     document.getElementById('did-login').innerText = hwid;
@@ -853,7 +853,7 @@
         
         // KEY "BILAL SIR" LOGIN VERIFICATION
         if (key === "BILAL SIR") {
-            termLog("Access Granted. Welcome to ANSH MODS.", 'term-login');
+            termLog("Access Granted. Welcome to BILAL SIR MODS.", 'term-login');
             switchScreen('scr-login', 'scr-server');
         } else {
             termLog("Error: Invalid Access Key", 'term-login');
@@ -884,7 +884,7 @@
         activeMarket = type;
         document.getElementById('market-tag').innerText = "WinGo " + type;
         switchScreen('scr-server', 'scr-dash');
-        termLog(`Connected to ANSH ${type} Server Engine`);
+        termLog(`Connected to BILAL SIR ${type} Server Engine`);
         startTimer();
         fetchData();
     }
@@ -940,7 +940,7 @@
         const n2 = parseInt(list[0].number);
         let bestNum = (n1 + n2 + 5) % 10;
         let conf = 88 + Math.floor(Math.random() * 10);
-        termLog(`ANSH AI: Calc (${n1}+${n2}) → Target: ${bestNum}`);
+        termLog(`BILAL SIR AI: Calc (${n1}+${n2}) → Target: ${bestNum}`);
         const type = bestNum >= 5 ? 'BIG' : 'SMALL';
         prediction = { period: currentPeriod, type, num: bestNum };
         const el = document.getElementById('p-res');
@@ -1002,11 +1002,11 @@
         c.className = 'popup-card';
         void c.offsetWidth;
         if (isWin) {
-            speak("ANSH MODS WIN");
+            speak("BILAL SIR MODS WIN");
             c.classList.add('p-win');
             t.innerText = "JACKPOT WIN";
             t.style.color = "var(--neon-green)";
-            m.innerText = "PROFIT SECURED BY ANSH MODS";
+            m.innerText = "PROFIT SECURED BY BILAL SIR MODS";
             i.className = "fa-solid fa-trophy pop-icon";
             i.style.color = "var(--neon-green)";
         } else {
@@ -1044,13 +1044,13 @@
             c.innerHTML = h;
         } else {
             c.innerHTML = `
-                <h3 style="text-align:center;color:var(--cyber-blue);font-family:'Orbitron';font-size:14px;letter-spacing:2px;margin-bottom:16px;">ANSH MODS SYSTEM INFO</h3>
+                <h3 style="text-align:center;color:var(--cyber-blue);font-family:'Orbitron';font-size:14px;letter-spacing:2px;margin-bottom:16px;">BILAL SIR MODS SYSTEM INFO</h3>
                 <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.8;font-family:'Share Tech Mono';">
-                    <p style="margin-bottom:10px;">⚡ <strong style="color:var(--cyber-blue)">ANSH MODS VIP ENGINE</strong></p>
+                    <p style="margin-bottom:10px;">⚡ <strong style="color:var(--cyber-blue)">BILAL SIR MODS VIP ENGINE</strong></p>
                     <p style="margin-bottom:8px;">🎯 Real-time Pattern Recognition</p>
                     <p style="margin-bottom:8px;">📡 Live WinGo Server Synchronizer</p>
                     <p style="margin-bottom:8px;">🔒 Encrypted Local Hardware ID</p>
-                    <p style="margin-top:16px;color:rgba(255,255,255,0.3);font-size:10px;text-align:center;">© ANSH MODS · ALL RIGHTS RESERVED</p>
+                    <p style="margin-top:16px;color:rgba(255,255,255,0.3);font-size:10px;text-align:center;">© BILAL SIR MODS · ALL RIGHTS RESERVED</p>
                 </div>`;
         }
     }
